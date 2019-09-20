@@ -247,5 +247,21 @@ gapminder %>%
   filter(country == "Australia") %>% 
   write_csv("results/gapminder_australian_data")
 
+#################################################
 
+# Start witjh gapminder data 
+# Filter the years 1987 and 2007
+# Sort lifeExp (by year)
+# Get just the top 10 for each year
+# count the number of times a country appears
+# Just keep the countries that appear twice
 
+gapminder %>% 
+  filter(year == 1987 | year == 2007) %>% 
+  group_by(year) %>% 
+  arrange(desc(lifeExp)) %>% 
+  slice(1:10) %>% 
+  group_by(country) %>%  
+  summarise(country_life_Exp= n()) %>% 
+  filter(country_life_Exp == 2) %>%   
+ write_csv("results/gapminder_top10_lifeExp_1987_2007")  
