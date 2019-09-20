@@ -1,3 +1,4 @@
+##### 19Sep19
 library(tidyverse) # Always type this on the 1st line
 read_csv("data/gapminder.csv") # Show few lines only but indicate "..more rows
 gapminder <- read_csv("data/gapminder.csv")
@@ -52,3 +53,30 @@ filter(gapminder, lifeExp >= 80)
 filter(gapminder, continent == "Europe", lifeExp >= 80, country != "Italy")
 
        
+select(gapminder, country, pop)
+filter(gapominder, country =="Australia")
+
+##### 20Sep19
+# Using "select" to create a dataframe then use "filter"  on country
+aussie_year_pop <- select(gapminder, country, year, pop)
+filter(aussie_year_pop, country == "Australia" )
+
+# Nested select and filter in two different ways #
+select(filter(gapminder, country == "Australia"), country, year, pop)
+filter(select(gapminder, country, year, pop), country == "Australia")
+
+# Use piping "%>%" Ctrl+Shft+M
+gapminder %>% select(year, pop)
+
+filter(gapminder, country == "Australia", year >= 1997)
+
+small <- gapminder %>% filter(country == "Australia", year >= 1997)
+small
+
+filter(select(gapminder, country, year, pop), country == "Australia")
+
+Australia_filter <- gapminder %>% 
+                      filter(country == "Australia") %>% 
+                      select(country, year, pop)
+
+
