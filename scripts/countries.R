@@ -75,8 +75,102 @@ small
 
 filter(select(gapminder, country, year, pop), country == "Australia")
 
-Australia_filter <- gapminder %>% 
+Australia_filter <- gapminder %>% # consider %>% as "then"
                       filter(country == "Australia") %>% 
                       select(country, year, pop)
 
+##### mutate
+
+# Adding a new column of gdp #
+with_gdp <- mutate(gapminder, gdp = gdpPercap * pop)
+with_gdp
+
+# Adding a new column of pop in million #
+pop_in_million <- mutate(gapminder, pop_M = pop/1e6)
+pop_in_million
+
+# Adding a new column of log of pop #
+mutate(gapminder, log_of_pop = log(pop))
+
+# Extract part of a text #
+str_sub("A long bit of text", start = 1, end = 5)
+
+# Extracting the first 3 letters in country to add as a new column 
+mutate(gapminder, country_abbr = str_sub(country, start = 1, end =3))
+
+str_length("some words")
+
+# New column with the number of characters in a country's name
+mutate(gapminder, country_Len = str_length(country))
+
+mutate(
+  gapminder,
+  gdp = gdpPercap * pop,
+  log_of_gdp = log(gdp)
+)
+
+# Adding new columns "lifeExp_Days" and "gdp_Bil" (gdp in billion)
+mutate(
+  gapminder,
+  lifeExp_Days = lifeExp * 365,
+  gdp_B = gdpPercap * pop / 1e9
+)
+
+
+# Summarising data -> we use the verb "summarise"
+
+summarise(gapminder, mean_life_exp = mean(lifeExp))
+
+# Summarising the mean and standard deviation of life expectancy,
+# as well as the highest gdpPercap
+summarise(
+  gapminder,
+  mean_life_exp = mean(lifeExp),
+  sd_life_exp = sd(lifeExp),
+  biggest_gdp = max(gdpPercap)
+)
+
+# Summarising the mean and median population data
+summarise(
+  gapminder,
+  mean_pop = mean(pop),
+  med_pop = median(pop)
+)
+
+gapminder %>% 
+  filter(country == "Australia") %>% 
+  summarise(
+    mean_pop = mean(pop),
+    med_pop = median(pop) 
+)
+
+# Summarising where columns contain numeric and calculate the mean
+summarise_if(gapminder, is.numeric,mean)
+
+# Group by - Example group by country
+
+by_country <- group_by(gapminder, country)
+by_country
+
+summarise(
+  by_country,
+  mean_pop = mean(pop)
+)
+
+# Display mean and median population by continent
+by_continent <- group_by(gapminder, continent)
+by_continent
+
+summarise(
+  by_continent,
+  mean_pop = mean(pop),
+  med_pop = median(pop)
+)
+
+gapminder %>% 
+  group_by(continent) %>% 
+  summarise(
+    mean_pop = mean(pop),
+    med_pop = median(pop)
+)
 
