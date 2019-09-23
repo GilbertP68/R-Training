@@ -264,4 +264,4 @@ gapminder %>%
   group_by(country) %>%  
   summarise(country_life_Exp= n()) %>% 
   filter(country_life_Exp == 2) %>%   
- write_csv("results/gapminder_top10_lifeExp_1987_2007")  
+ write_tsv("results/gapminder_top10_lifeExp_1987_2007_tab")  
