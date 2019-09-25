@@ -1,10 +1,16 @@
 ##### 19Sep19
 library(tidyverse) # Always type this on the 1st line
+library(data.table) # Whenever you are working with large data sets
+
 read_csv("data/gapminder.csv") # Show few lines only but indicate "..more rows
 gapminder <- read_csv("data/gapminder.csv")
 
+gapminder
+
 nrow(gapminder) # Finding the number of rows in my data table
-ncol(gapminder) # Finding the number of columns
+
+ncol(gapminder) # Finding the number of columns in the data table
+
 colnames(gapminder) # Column heading names
 glimpse(gapminder) # Get of view of data contained in your table
 summary(gapminder)
@@ -17,9 +23,11 @@ summary(storms)
 
 select(gapminder, year, country, pop) # A new dataframe will be generated
 # More human friendly to put column names
+select(gapminder, country, year, pop)
 select(gapminder, 3,1,5) # It will work but not human friendly
 select(gapminder, 3:5)
-select(gapminder, -lifeExp, -pop)
+select(gapminder, -lifeExp, -pop)# Table will be displayed without "lifeExp"
+# "pop"
 select(gapminder, year:lifeExp)
 select(gapminder, -(year:lifeExp))
 
@@ -147,6 +155,10 @@ gapminder %>%
 # Summarising where columns contain numeric and calculate the mean
 summarise_if(gapminder, is.numeric,mean)
 
+# The same as above but using the pipe ( %>% )
+gapminder %>% 
+  summarise_if(is.numeric,mean)
+
 # Group by - Example group by country
 
 by_country <- group_by(gapminder, country)
@@ -265,3 +277,145 @@ gapminder %>%
   summarise(country_life_Exp= n()) %>% 
   filter(country_life_Exp == 2) %>%   
  write_tsv("results/gapminder_top10_lifeExp_1987_2007_tab")  
+
+################### Date 25/09/19 ##################
+library(tidyverse) # Always type this on the 1st line
+
+
+read_csv("data/gapminder.csv") # Show few lines only but indicate "..more rows
+gapminder <- read_csv("data/gapminder.csv")
+gapminder
+
+gapminder %>% 
+  filter(year == 1957) %>% # Filter on year 1957
+  group_by(continent) %>% # Group by continent
+  summarise(max_gdpPercap = max(gdpPercap)) %>%  # summarise  by continent to find the maximum gdpPercap
+  write_csv("results/gapminder_max_gdpPercap_by_continent")
+  
+
+gapminder_2012 <- read_csv("data/gapminder_2012.csv")
+gapminder_2012
+
+# binding 2 dataframes with same number of columns
+gapminder_extra <- bind_rows(gapminder,gapminder_2012)
+gapminder_extra
+
+rename_2012 <- rename(gapminder_2012, population = pop)
+rename_2012
+mismatched_names <- bind_rows(gapminder, rename_2012)
+tail(mismatched_names) # To see if the values habe been added at the end of the dataframe, i.e. pop for 2012 
+
+#################### Joins lesson ##########################
+
+######### Revise vector ##########
+example_vector  <- c(1,4,2,7)
+example_vector
+
+string_vector <- c("Hi", "it's", "ok")
+string_vector
+
+
+# Building data sets
+df1 <- tibble(sample = c(1,2,3), measure1 = c(4.2,5.3,6.1))
+df1
+
+df2 <- tibble(sample = c(1,3,4), measure2 = c(7.8,6.4,9.0))
+df2
+
+
+inner_join(df1,df2) # inner_join function
+full_join(df1,df2)  # full_join function
+left_join(df1,df2)  # left_join function will join df2 onto df1
+right_join(df1,df2) # joining df1 onto df2 
+
+
+df3 <- tibble(ID = c(1,2,4), measure3 = c(4.7,34,2.6))
+df3
+
+full_join(df1,df3, by = c("sample" = "ID"))
+full_join(df1, df2, by = c("sample"))
+full_join(df1,df3, by = c("sample" = "ID", "measure1" = "measure3"))
+
+################## gather and spread functions #####################################
+############ gather #############
+cows <- tibble(id = c(1,2,3),
+               weight1 = c(203,227,193),
+               weight2 = c(365, 344, 329))
+cows
+
+cows_tidy <- gather(cows, rep, weight,-id)
+cows_tidy
+
+cows_tidy %>% 
+  arrange(id)
+
+cows_tidy
+
+########### Spread ###############
+spread(cows_tidy, rep, weight)
+
+
+##### gather exercise ###########
+# gather(dataset, where_to_store_colmun_names, where_to_store_values, what_NOT_to_gather)
+
+table4a
+
+gather_table4a <- gather(table4a, year, values, -country)
+gather_table4a
+
+###### Using pipe with gather #############
+gather_table4a <- table4a %>% 
+    gather(year, values, -country)
+
+gather_table4a
+
+##### spread the list bakc to table
+# spread(dataset, which_column_to_create_newColumnNames, which_column_to_get_values)
+spread(gather_table4a, year, values)
+
+##### or we can use pipe
+
+spread_table4a <- gather_table4a %>% 
+  spread(year, values)
+
+spread_table4a
+
+############################
+table2
+
+spread_table2 <- table2 %>% 
+  spread(type, count) %>% 
+  arrange(year)
+
+spread_table2
+
+####### display values for each year
+spread_table2_year <- table2 %>% 
+  spread(year, count) %>% 
+  arrange(type)
+
+spread_table2_year
+
+
+###################### Separate function #################################################
+
+cows <- tibble(id = c(1,2,3),
+               weight1 = c(203,227,193),
+               weight2 = c(365, 344, 329))
+cows
+
+cows_with_breed <- cows %>% 
+  mutate(id = c("1_A", "2_A","3_B"))
+
+cows_with_breed
+separate(cows_with_breed, col = id, into = c("ID", "breed"), sep = "_") #separate() will split the text in id of using the "_"
+
+cows_with_breed
+separate(cows_with_breed, id, c("ID", "breed"), "_") # This will work as well when not be very explicit mentioning the arguments
+# But it's more readable to mention the arguments! The order is IMPORTANT!!!
+
+
+
+
+
+
