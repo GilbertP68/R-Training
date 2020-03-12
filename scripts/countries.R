@@ -14,6 +14,11 @@ ncol(gapminder) # Finding the number of columns in the data table
 colnames(gapminder) # Column heading names
 glimpse(gapminder) # Get of view of data contained in your table
 summary(gapminder)
+
+gapminder$year # Display the years in year column
+any_years <- gapminder$year # Storing the data years in any-years
+
+
 ################################################################
 nrow(storms)
 ncol(storms)
@@ -51,20 +56,23 @@ select(gapminder, population = pop, country)
 rename(gapminder, population = pop) # it will look for a column on the RHS 
 gapminder
 
-#------ Filter------#
+#####------ Filter------#####
 
 filter(gapminder, country == "Australia")
+filter(gapminder, country != "Australia")
 filter(gapminder, year >= "1997")
 filter(gapminder, year >= 1997)
 
-filter(gapminder, lifeExp >= 80)
-filter(gapminder, continent == "Europe", lifeExp >= 80, country != "Italy")
-
+filter(gapminder, lifeExp > 80)
+filter(gapminder, continent == "Europe", lifeExp > 80, country != "Italy")
+filter(gapminder, country %in% c("Australia", "New Zealand", "india"))
        
 select(gapminder, country, pop)
 filter(gapominder, country =="Australia")
 
-##### 20Sep19
+
+################## 20Sep19 ###################
+
 # Using "select" to create a dataframe then use "filter"  on country
 aussie_year_pop <- select(gapminder, country, year, pop)
 filter(aussie_year_pop, country == "Australia" )
@@ -87,7 +95,7 @@ Australia_filter <- gapminder %>% # consider %>% as "then"
                       filter(country == "Australia") %>% 
                       select(country, year, pop)
 
-##### mutate
+##### mutate #####
 
 # Adding a new column of gdp #
 with_gdp <- mutate(gapminder, gdp = gdpPercap * pop)
@@ -231,7 +239,7 @@ summarise(by_country, num_rows = n()) %>%
   view()
 
 
-# read in excel files
+##### read in excel files #####
 
 read_csv("data/gapminder.xlsx")
 
@@ -261,7 +269,7 @@ gapminder %>%
 
 #################################################
 
-# Start witjh gapminder data 
+# Start with gapminder data 
 # Filter the years 1987 and 2007
 # Sort lifeExp (by year)
 # Get just the top 10 for each year
@@ -278,9 +286,10 @@ gapminder %>%
   filter(country_life_Exp == 2) %>%   
  write_tsv("results/gapminder_top10_lifeExp_1987_2007_tab")  
 
+
+
 ################### Date 25/09/19 ##################
 library(tidyverse) # Always type this on the 1st line
-
 
 read_csv("data/gapminder.csv") # Show few lines only but indicate "..more rows
 gapminder <- read_csv("data/gapminder.csv")
@@ -307,7 +316,7 @@ tail(mismatched_names) # To see if the values habe been added at the end of the 
 
 #################### Joins lesson ##########################
 
-######### Revise vector ##########
+######### Quick revision on vector ##########
 example_vector  <- c(1,4,2,7)
 example_vector
 
@@ -369,7 +378,7 @@ gather_table4a <- table4a %>%
 
 gather_table4a
 
-##### spread the list bakc to table
+##### spread the list back to table
 # spread(dataset, which_column_to_create_newColumnNames, which_column_to_get_values)
 spread(gather_table4a, year, values)
 
